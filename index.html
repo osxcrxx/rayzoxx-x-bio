@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rayzoxx-X :: Matrix Terminal</title>
+    <style>
+        /* CSS : Style général et ambiance hacker */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            overflow: hidden; /* Empêche les barres de défilement */
+            color: #0F0; /* Vert Matrix par défaut */
+            font-family: 'Courier New', Courier, monospace; /* Police monospace */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Le Canvas pour la pluie Matrix */
+        #matrixCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Derrière le texte */
+        }
+
+        /* Le conteneur du texte */
+        #content {
+            z-index: 2; /* Devant la pluie */
+            text-align: center;
+            position: relative;
+        }
+
+        /* Style du pseudo rayzoxx-x */
+        .pseudo {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #0F0;
+            text-shadow: 0 0 10px #0F0, 0 0 20px #0F0, 0 0 30px #0F0; /* Effet néon vert */
+            letter-spacing: 5px;
+            animation: textGlow 2s infinite alternate;
+        }
+
+        /* Sous-texte style terminal */
+        .subtitle {
+            font-size: 1.2rem;
+            color: #008000; /* Vert plus sombre */
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        /* Animation de scintillement du pseudo */
+        @keyframes textGlow {
+            0% { opacity: 0.8; text-shadow: 0 0 10px #0F0; }
+            100% { opacity: 1; text-shadow: 0 0 20px #0F0, 0 0 30px #0F0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Arrière-plan de la pluie Matrix -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <!-- Contenu Principal -->
+    <div id="content">
+        <div class="pseudo">RAYZOXX-X</div>
+        <div class="subtitle">> DECRYPTING_BIOGRAPHY..._</div>
+    </div>
+
+    <!-- JavaScript : Création de l'effet de pluie -->
+    <script>
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Adaptateur la taille du canvas à l'écran
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+
+        // Les caractères à utiliser (Katakana japonais + alphabet/chiffres)
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+        const alphabet = katakana + latin + nums;
+
+        const fontSize = 16;
+        const columns = canvas.width / fontSize; // Nombre de colonnes de pluie
+
+        // Tableau pour stocker la position 'y' de chaque colonne (commence à 1)
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        // Fonction de dessin de la pluie
+        function drawMatrix() {
+            // Un fond noir semi-transparent pour créer l'effet de traînée
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Couleur verte des caractères
+            ctx.fillStyle = '#0F0'; 
+            ctx.font = fontSize + 'px monospace';
+
+            // Boucle sur chaque colonne pour dessiner un caractère
+            for (let i = 0; i < drops.length; i++) {
+                // Choisir un caractère aléatoire
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                // Dessiner le caractère à la position x, y actuelle
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                // Si le caractère atteint le bas de l'écran, le réinitialiser en haut
+                // Le `Math.random() > 0.975` ajoute un peu de hasard à la descente
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                // Incrémenter la position Y pour la prochaine image
+                drops[i]++;
+            }
+        }
+
+        // Exécuter la fonction drawMatrix toutes les 35ms pour créer l'animation
+        setInterval(drawMatrix, 35);
+
+        // Gérer le redimensionnement de la fenêtre
+        window.addEventListener('resize', () => {
+            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+        });
+
+    </script>
+</body>
+</html>
